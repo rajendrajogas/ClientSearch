@@ -5,6 +5,7 @@ import com.client.search.app.service.NewsApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Map;
 
 @RestController
@@ -22,12 +23,12 @@ public class ServiceController {
     }
 
     @PostMapping("/news")
-    public Map<String, Object> newsApi(@RequestBody NewsRequest request){
+    public Map<String, Object> newsApi(@RequestBody NewsRequest request) throws IOException {
         return newsApiService.getNewsApiResponse(request);
     }
 
     @PostMapping("/news/process")
-    public Map<String, Object> processNewsApi(@RequestBody Map<String, Object> request){
+    public Map<String, Object> processNewsApi(@RequestBody Map<String, Object> request) throws IOException {
         return newsApiService.processNewsApiResponse(request);
     }
 

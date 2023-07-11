@@ -1,19 +1,20 @@
 package com.client.search.app.service;
 
 import com.client.search.app.model.NewsRequest;
-import com.google.cloud.language.v1beta2.AnalyzeSentimentRequest;
-import com.google.cloud.language.v1beta2.ClassificationCategory;
-import com.google.cloud.language.v1beta2.Document;
-import com.google.cloud.language.v1beta2.LanguageServiceClient;
+import com.google.api.gax.core.FixedCredentialsProvider;
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.language.v1beta2.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -34,7 +35,10 @@ public class NewsApiService {
     @Value("${news.api.endpoint}")
     private String newApiEndpoint;
 
-    public Map<String, Object> getNewsApiResponse(NewsRequest request) {
+    @Value("${gcp.service.account.json}")
+    private Resource serviceAccountResource;
+
+    public Map<String, Object> getNewsApiResponse(NewsRequest request) throws IOException {
         String queryString = URLEncoder.encode(request.getQueryString(), StandardCharsets.UTF_8);
         Date fromDate = request.getFromDate();
         Date toDate = request.getToDate();
@@ -51,7 +55,7 @@ public class NewsApiService {
         return response.getBody();
     }
 
-    public Map<String, Object> processNewsApiResponse(Map<String, Object> request) {
+    public Map<String, Object> processNewsApiResponse(Map<String, Object> request) throws IOException {
         List<Map<String, Object>> articles = (List<Map<String, Object>>) request.get("articles");
         int i=1;
 
@@ -63,12 +67,17 @@ public class NewsApiService {
                 }
                 String description = (String) articles.get(j).get("description");
                 String url = (String) articles.get(j).get("url");
-                try (LanguageServiceClient language = LanguageServiceClient.create()) {
+
+
+                InputStream resourceAsStream=serviceAccountResource.getInputStream();
+                GoogleCredentials credential = GoogleCredentials.fromStream(resourceAsStream);
+                LanguageServiceSettings languageServiceSettings= LanguageServiceSettings.newBuilder().setCredentialsProvider(FixedCredentialsProvider.create(credential)).build();
+                try (LanguageServiceClient language = LanguageServiceClient.create(languageServiceSettings)) {
                     Document doc = Document.newBuilder().setContent(description).setType(Document.Type.PLAIN_TEXT).build();
                     // analyzeSentiment API
                     com.google.cloud.language.v1beta2.Sentiment sentiment = language.analyzeSentiment(doc).getDocumentSentiment();
                     Map<String, Object> analysis = new HashMap<>();
-                    analysis.put("magniture", sentiment.getMagnitude());
+                    analysis.put("magnitude", sentiment.getMagnitude());
                     analysis.put("score", sentiment.getScore());
                     if (sentiment.getScore() > 0.0) {
                         analysis.put("sentiment", "Positive");
