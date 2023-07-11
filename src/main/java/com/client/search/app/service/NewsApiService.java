@@ -109,12 +109,16 @@ public class NewsApiService {
         for (Map<String, Object> article : articles) {
             String description = (String) article.get("description");
             String url = (String) article.get("url");
-            try (LanguageServiceClient language = LanguageServiceClient.create()) {
+
+            InputStream resourceAsStream=serviceAccountResource.getInputStream();
+            GoogleCredentials credential = GoogleCredentials.fromStream(resourceAsStream);
+            LanguageServiceSettings languageServiceSettings= LanguageServiceSettings.newBuilder().setCredentialsProvider(FixedCredentialsProvider.create(credential)).build();
+            try (LanguageServiceClient language = LanguageServiceClient.create(languageServiceSettings)) {
                 Document doc = Document.newBuilder().setContent(description).setType(Document.Type.PLAIN_TEXT).build();
                 // analyzeSentiment API
                 com.google.cloud.language.v1beta2.Sentiment sentiment = language.analyzeSentiment(doc).getDocumentSentiment();
                 Map<String, Object> analysis = new HashMap<>();
-                analysis.put("magniture", sentiment.getMagnitude());
+                analysis.put("magnitude", sentiment.getMagnitude());
                 analysis.put("score", sentiment.getScore());
                 if (sentiment.getScore() > 0.0) {
                     analysis.put("sentiment", "Positive");
