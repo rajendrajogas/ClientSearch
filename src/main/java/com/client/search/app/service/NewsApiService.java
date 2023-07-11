@@ -60,7 +60,7 @@ public class NewsApiService {
         int i=1;
 
 
-        if (articles.size() > 10) {
+        /*if (articles.size() > 10) {
             for (int j = 0; j < articles.size(); j++) {
                 if (j == 10 ) {
                     break;
@@ -105,8 +105,8 @@ public class NewsApiService {
                 }
                 log.info("Counter" + j);
             }
-        }
-        /*for (Map<String, Object> article : articles) {
+        }*/
+        for (Map<String, Object> article : articles) {
             String description = (String) article.get("description");
             String url = (String) article.get("url");
             try (LanguageServiceClient language = LanguageServiceClient.create()) {
@@ -140,7 +140,7 @@ public class NewsApiService {
             } catch (IOException e) {
                 //Ignore article
             }
-        }*/
+        }
         return request;
     }
 }
