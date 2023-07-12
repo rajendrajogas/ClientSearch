@@ -57,55 +57,7 @@ public class NewsApiService {
 
     public Map<String, Object> processNewsApiResponse(Map<String, Object> request) throws IOException {
         List<Map<String, Object>> articles = (List<Map<String, Object>>) request.get("articles");
-        int i=1;
 
-
-        /*if (articles.size() > 10) {
-            for (int j = 0; j < articles.size(); j++) {
-                if (j == 10 ) {
-                    break;
-                }
-                String description = (String) articles.get(j).get("description");
-                String url = (String) articles.get(j).get("url");
-
-
-                InputStream resourceAsStream=serviceAccountResource.getInputStream();
-                GoogleCredentials credential = GoogleCredentials.fromStream(resourceAsStream);
-                LanguageServiceSettings languageServiceSettings= LanguageServiceSettings.newBuilder().setCredentialsProvider(FixedCredentialsProvider.create(credential)).build();
-                try (LanguageServiceClient language = LanguageServiceClient.create(languageServiceSettings)) {
-                    Document doc = Document.newBuilder().setContent(description).setType(Document.Type.PLAIN_TEXT).build();
-                    // analyzeSentiment API
-                    com.google.cloud.language.v1beta2.Sentiment sentiment = language.analyzeSentiment(doc).getDocumentSentiment();
-                    Map<String, Object> analysis = new HashMap<>();
-                    analysis.put("magnitude", sentiment.getMagnitude());
-                    analysis.put("score", sentiment.getScore());
-                    if (sentiment.getScore() > 0.0) {
-                        analysis.put("sentiment", "Positive");
-                    } else if (sentiment.getScore() < 0.0) {
-                        analysis.put("sentiment", "Negative");
-                    } else {
-                        analysis.put("sentiment", "Neutral");
-                    }
-                    articles.get(j).put("analysis", analysis);
-
-                    //Classification API
-                    if (description.length() > 250) {
-                        List<ClassificationCategory> categories = language.classifyText(doc).getCategoriesList();
-                        if (categories != null && categories.size() > 0) {
-                            Map<String, Object> classification = new HashMap<>();
-                            for (ClassificationCategory category:categories) {
-                                classification.put("confidence", category.getConfidence());
-                                classification.put("name", category.getName());
-                            }
-                            articles.get(j).put("classification", classification);
-                        }
-                    }
-                } catch (IOException e) {
-                    //Ignore article
-                }
-                log.info("Counter" + j);
-            }
-        }*/
         for (Map<String, Object> article : articles) {
             String description = (String) article.get("description");
             String url = (String) article.get("url");
@@ -141,6 +93,13 @@ public class NewsApiService {
                         article.put("classification", classification);
                     }
                 }
+
+               /* for (Entity entity: entList) {
+                    if (entity.getType() == Entity.Type.PERSON or entity.getType() == Entity.Type or entity.getType() == "PERSON"){
+
+                    }
+                }*/
+
             } catch (IOException e) {
                 //Ignore article
             }
