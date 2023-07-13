@@ -115,7 +115,7 @@ public class NewsApiService {
                 }*/
             } catch (IOException ex) {
                 //Ignore article
-                LOG.error("Inside processNewsApiResponse() : {}", ex.getMessage());
+                LOG.info("Inside processNewsApiResponse() : {}", ex.getMessage());
             }
         }
         LOG.info("Inside processNewsApiResponse() : Exit");
