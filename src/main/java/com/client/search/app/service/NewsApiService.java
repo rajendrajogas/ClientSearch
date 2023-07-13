@@ -43,8 +43,8 @@ public class NewsApiService {
         Date fromDate = request.getFromDate();
         Date toDate = request.getToDate();
         String sortBy = request.getSortBy();
-        String url = String.format(newApiEndpoint, queryString, fromDate, toDate, sortBy, newsApiKey);
-
+        //String url = String.format(newApiEndpoint, queryString, fromDate, toDate, sortBy, newsApiKey);
+        String url = String.format(newApiEndpoint, queryString,fromDate, toDate, sortBy, newsApiKey);
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity requestEntity = new HttpEntity(httpHeaders);
@@ -81,7 +81,7 @@ public class NewsApiService {
                 }
                 article.put("analysis", analysis);
 
-                //Classification API
+                /*//Classification API
                 if (description.length() > 250) {
                     List<ClassificationCategory> categories = language.classifyText(doc).getCategoriesList();
                     if (categories != null && categories.size() > 0) {
@@ -92,14 +92,7 @@ public class NewsApiService {
                         }
                         article.put("classification", classification);
                     }
-                }
-
-               /* for (Entity entity: entList) {
-                    if (entity.getType() == Entity.Type.PERSON or entity.getType() == Entity.Type or entity.getType() == "PERSON"){
-
-                    }
                 }*/
-
             } catch (IOException e) {
                 //Ignore article
             }
