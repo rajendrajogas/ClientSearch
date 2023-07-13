@@ -51,15 +51,19 @@ public class NewsApiService {
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity
                 , new ParameterizedTypeReference<Map<String, Object>>() {
                 });
+        System.out.println("1 ===>" + response.getBody());
         processNewsApiResponse(response.getBody());
         return response.getBody();
     }
 
     public Map<String, Object> processNewsApiResponse(Map<String, Object> request) throws IOException {
         List<Map<String, Object>> articles = (List<Map<String, Object>>) request.get("articles");
-
+System.out.println("2 ===>" + articles.size());
         for (Map<String, Object> article : articles) {
             String description = (String) article.get("description");
+            System.out.println("3 ===>" + description);
+            if(null == description)
+                continue;
             String url = (String) article.get("url");
 
             InputStream resourceAsStream=serviceAccountResource.getInputStream();
