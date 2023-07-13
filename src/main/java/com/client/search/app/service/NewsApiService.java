@@ -1,10 +1,13 @@
 package com.client.search.app.service;
 
+import com.client.search.app.ClientSearchApplication;
 import com.client.search.app.model.NewsRequest;
 import com.google.api.gax.core.FixedCredentialsProvider;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.language.v1beta2.*;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -26,6 +29,8 @@ import java.util.Map;
 @Service
 public class NewsApiService {
 
+    private static Logger LOG = LoggerFactory.getLogger(NewsApiService.class);
+
     @Autowired
     RestTemplate restTemplate;
 
@@ -39,29 +44,40 @@ public class NewsApiService {
     private Resource serviceAccountResource;
 
     public Map<String, Object> getNewsApiResponse(NewsRequest request) throws IOException {
+
+        LOG.info("Inside getNewsApiResponse() : Enter");
+
         String queryString = URLEncoder.encode(request.getQueryString(), StandardCharsets.UTF_8);
         Date fromDate = request.getFromDate();
         Date toDate = request.getToDate();
         String sortBy = request.getSortBy();
         //String url = String.format(newApiEndpoint, queryString, fromDate, toDate, sortBy, newsApiKey);
         String url = String.format(newApiEndpoint, queryString,fromDate, toDate, sortBy, newsApiKey);
+
+        LOG.info("Inside getNewsApiResponse() : URL : {}", url);
+
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity requestEntity = new HttpEntity(httpHeaders);
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(url, HttpMethod.GET, requestEntity
                 , new ParameterizedTypeReference<Map<String, Object>>() {
                 });
-        System.out.println("1 ===>" + response.getBody());
+        LOG.info("Inside getNewsApiResponse() : Response : {}", response.getBody());
+        //System.out.println("1 ===>" + response.getBody());
         processNewsApiResponse(response.getBody());
+
+        LOG.info("Inside getNewsApiResponse() : Exit");
         return response.getBody();
     }
 
     public Map<String, Object> processNewsApiResponse(Map<String, Object> request) throws IOException {
+        LOG.info("Inside processNewsApiResponse() : Enter");
         List<Map<String, Object>> articles = (List<Map<String, Object>>) request.get("articles");
-System.out.println("2 ===>" + articles.size());
+        LOG.info("Inside processNewsApiResponse() : No. Of Articals : {}", articles.size());
         for (Map<String, Object> article : articles) {
             String description = (String) article.get("description");
-            System.out.println("3 ===>" + description);
+            //System.out.println("3 ===>" + description);
+            LOG.info("Inside processNewsApiResponse() : Description : {}", description);
             if(null == description)
                 continue;
             String url = (String) article.get("url");
@@ -97,10 +113,12 @@ System.out.println("2 ===>" + articles.size());
                         article.put("classification", classification);
                     }
                 }*/
-            } catch (IOException e) {
+            } catch (IOException ex) {
                 //Ignore article
+                LOG.error("Inside processNewsApiResponse() : {}", ex.getMessage());
             }
         }
+        LOG.info("Inside processNewsApiResponse() : Exit");
         return request;
     }
 }

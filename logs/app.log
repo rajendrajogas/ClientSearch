@@ -1,0 +1,5 @@
+16:31:36.507 [main] INFO  c.c.s.app.ClientSearchApplication - Launching the application
+16:31:37.014 [main] INFO  c.c.s.app.ClientSearchApplication - Starting ClientSearchApplication using Java 17 with PID 16696 (C:\Users\rajen\AmitP\merge\ClientSearch\target\classes started by rajen in C:\Users\rajen\AmitP\merge\ClientSearch)
+16:31:37.015 [main] DEBUG c.c.s.app.ClientSearchApplication - Running with Spring Boot v3.1.1, Spring v6.0.10
+16:31:37.016 [main] INFO  c.c.s.app.ClientSearchApplication - No active profile set, falling back to 1 default profile: "default"
+16:31:38.588 [main] INFO  c.c.s.app.ClientSearchApplication - Started ClientSearchApplication in 1.953 seconds (process running for 2.615)
