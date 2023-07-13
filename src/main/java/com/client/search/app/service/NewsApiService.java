@@ -82,10 +82,10 @@ public class NewsApiService {
                 continue;
             String url = (String) article.get("url");
 
-            /*InputStream resourceAsStream=serviceAccountResource.getInputStream();
+            InputStream resourceAsStream=serviceAccountResource.getInputStream();
             GoogleCredentials credential = GoogleCredentials.fromStream(resourceAsStream);
             LanguageServiceSettings languageServiceSettings= LanguageServiceSettings.newBuilder().setCredentialsProvider(FixedCredentialsProvider.create(credential)).build();
-*/            try (LanguageServiceClient language = LanguageServiceClient.create()) {
+            try (LanguageServiceClient language = LanguageServiceClient.create(languageServiceSettings)) {
                 Document doc = Document.newBuilder().setContent(description).setType(Document.Type.PLAIN_TEXT).build();
                 // analyzeSentiment API
                 com.google.cloud.language.v1beta2.Sentiment sentiment = language.analyzeSentiment(doc).getDocumentSentiment();
