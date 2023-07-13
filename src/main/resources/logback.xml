@@ -29,9 +29,9 @@
     </appender>
 
     <logger name="com.client" level="debug" additivity="false">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="CONSOLE"/>
     </logger>
     <root level="error">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>
